@@ -9,8 +9,8 @@ _LEAK_KEYWORDS = (
     "language model",
     "i'm an ai",
     "i am an ai",
-    "\bsystem\b",
-    "\bprompt\b",
+    r"\bsystem\b",
+    r"\bprompt\b",
 )
 
 _SCORE_NUMBER_RE = re.compile(r"\b\d{1,3}\s*(%|percent|points?|/\s*100)", re.IGNORECASE)
