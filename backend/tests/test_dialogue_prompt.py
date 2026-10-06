@@ -16,7 +16,7 @@ def test_prompt_contains_hidden_concern_only_when_revealing():
 def test_prompt_never_contains_raw_numbers_section():
     prompt = build_system_prompt("guarded", reveal_now=False, closed_answers=True)
     assert "trust" not in prompt.lower()
-    assert "stress" not in prompt.lower() or "short" in prompt.lower()
+    assert "stress" not in prompt.lower()
 
 
 def test_prompt_instructs_short_closed_answers_when_flagged():

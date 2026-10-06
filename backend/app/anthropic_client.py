@@ -120,4 +120,8 @@ def get_debrief_suggestions(behaviour_counts: dict[str, int], concern_revealed: 
     )
     text = "".join(block.text for block in response.content if block.type == "text").strip()
     lines = [line.strip("-• ").strip() for line in text.splitlines() if line.strip()]
-    return lines[:2] if len(lines) >= 2 else [text]
+    if not lines:
+        lines = [text] if text else ["Keep practising — small, specific moments mattered most here."]
+    while len(lines) < 2:
+        lines.append(lines[-1])
+    return lines[:2]
