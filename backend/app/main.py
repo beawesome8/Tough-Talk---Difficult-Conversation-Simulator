@@ -1,8 +1,8 @@
 # backend/app/main.py
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 
-from app import anthropic_client, session_store
+from app import anthropic_client, rate_limit, session_store
 from app.models import Turn
 from app.scenario import OPENING_LINE
 from app.state import apply_tags, atmosphere, is_short_closed, should_reveal
@@ -45,13 +45,23 @@ class EndResponse(BaseModel):
     suggestions: list[str]
 
 
+def _enforce_limits(request: Request):
+    ip = request.client.host if request.client else "unknown"
+    if not rate_limit.check_daily_budget():
+        raise HTTPException(status_code=503, detail="demo is resting for today, please try again tomorrow")
+    if not rate_limit.check_rate_limit(ip):
+        raise HTTPException(status_code=429, detail="too many requests, please slow down")
+    rate_limit.record_call()
+
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
 
 
 @app.post("/session", response_model=StartResponse)
-def start_session():
+def start_session(request: Request):
+    _enforce_limits(request)
     session = session_store.create_session()
     return StartResponse(
         session_id=session.session_id,
@@ -61,7 +71,8 @@ def start_session():
 
 
 @app.post("/turn", response_model=TurnResponse)
-def take_turn(body: TurnRequest):
+def take_turn(body: TurnRequest, request: Request):
+    _enforce_limits(request)
     session = session_store.get_session(body.session_id)
     if session is None:
         raise HTTPException(status_code=404, detail="session not found or expired")
