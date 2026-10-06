@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: tough-talk-backend
+    runtime: docker
+    dockerfilePath: backend/Dockerfile
+    dockerContext: backend
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: RATE_LIMIT_PER_MINUTE
+        value: "20"
+      - key: DAILY_BUDGET_CALLS
+        value: "500"
+    healthCheckPath: /health
+
+  - type: web
+    name: tough-talk-frontend
+    runtime: static
+    staticPublishPath: frontend/dist
+    buildCommand: cd frontend && npm install && npm run build
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: tough-talk-backend
+          property: host

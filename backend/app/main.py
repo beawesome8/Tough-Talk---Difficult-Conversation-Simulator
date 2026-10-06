@@ -1,5 +1,8 @@
 # backend/app/main.py
+import os
+
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from app import anthropic_client, rate_limit, session_store
@@ -8,6 +11,13 @@ from app.scenario import OPENING_LINE
 from app.state import apply_tags, atmosphere, is_short_closed, should_reveal
 
 app = FastAPI(title="Tough Talk")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=os.environ.get("ALLOWED_ORIGINS", "*").split(","),
+    allow_methods=["POST", "GET"],
+    allow_headers=["*"],
+)
 
 
 class StartResponse(BaseModel):
