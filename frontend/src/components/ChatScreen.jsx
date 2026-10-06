@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { endSession, sendTurn } from "../api.js";
 import AtmosphereIndicator from "./AtmosphereIndicator.jsx";
 
@@ -8,8 +8,11 @@ export default function ChatScreen({ sessionId, openingLine, onEnded }) {
   const [draft, setDraft] = useState("");
   const [loading, setLoading] = useState(false);
   const [ended, setEnded] = useState(false);
+  const endingRef = useRef(false);
 
   async function finishConversation() {
+    if (endingRef.current) return;
+    endingRef.current = true;
     const debrief = await endSession(sessionId);
     onEnded(debrief);
   }
@@ -82,7 +85,7 @@ export default function ChatScreen({ sessionId, openingLine, onEnded }) {
         </button>
       </div>
       <p style={{ marginTop: 16 }}>
-        <button onClick={finishConversation} disabled={ended}>
+        <button onClick={finishConversation} disabled={loading || ended}>
           End conversation
         </button>
       </p>
