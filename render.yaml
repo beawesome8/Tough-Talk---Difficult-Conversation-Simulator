@@ -11,6 +11,14 @@ services:
         value: "20"
       - key: DAILY_BUDGET_CALLS
         value: "500"
+      # Render's fromService/host typically returns a bare hostname; if CORS
+      # rejects the frontend in practice, change this to a literal
+      # "https://<frontend-host>" origin string once the real URL is known.
+      - key: ALLOWED_ORIGINS
+        fromService:
+          type: web
+          name: tough-talk-frontend
+          property: host
     healthCheckPath: /health
 
   - type: web
