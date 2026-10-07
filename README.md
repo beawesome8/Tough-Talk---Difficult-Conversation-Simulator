@@ -1,5 +1,9 @@
 # Tough Talk — Difficult Conversation Simulator
 
+**Live demo:** https://tough-talk-frontend.onrender.com
+(hosted on Render's free tier — spins down after inactivity, so the first
+load can take up to ~50 seconds; it's quick after that)
+
 A one-day prototype built for the atrain Innovation Hub application (Problem 03,
 "Build what doesn't exist yet"). Lets a leader practise a hard conversation with
 Sam, a scripted AI character whose trust/stress state lives in plain backend
