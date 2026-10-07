@@ -42,53 +42,48 @@ export default function ChatScreen({ sessionId, openingLine, onEnded }) {
 
   return (
     <div className="screen">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h2>Conversation with Sam</h2>
-        <AtmosphereIndicator level={atmosphere} />
+      <div className="card">
+        <div className="chat-header">
+          <h2>Conversation with Sam</h2>
+          <AtmosphereIndicator level={atmosphere} />
+        </div>
+        <div className="chat-log">
+          {messages.map((m, i) => (
+            <div key={i} className={`message-row ${m.from}`}>
+              <div className={`avatar ${m.from}`}>{m.from === "leader" ? "Y" : "S"}</div>
+              <div className={`bubble ${m.from}`}>{m.text}</div>
+            </div>
+          ))}
+          {loading && (
+            <div className="message-row sam">
+              <div className="avatar sam">S</div>
+              <div className="bubble sam typing">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="composer">
+          <input
+            type="text"
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Type your message…"
+            disabled={loading || ended}
+          />
+          <button onClick={handleSend} disabled={loading || ended}>
+            Send
+          </button>
+        </div>
+        <div className="actions-row">
+          <button className="secondary" onClick={finishConversation} disabled={loading || ended}>
+            End conversation
+          </button>
+        </div>
       </div>
-      <div style={{ minHeight: 280, marginBottom: 12 }}>
-        {messages.map((m, i) => (
-          <div
-            key={i}
-            style={{
-              textAlign: m.from === "leader" ? "right" : "left",
-              margin: "8px 0",
-            }}
-          >
-            <span
-              style={{
-                display: "inline-block",
-                padding: "8px 12px",
-                borderRadius: 12,
-                background: m.from === "leader" ? "#2f6f4f" : "#eee",
-                color: m.from === "leader" ? "white" : "#222",
-                maxWidth: "80%",
-              }}
-            >
-              {m.text}
-            </span>
-          </div>
-        ))}
-        {loading && <p>Sam is thinking…</p>}
-      </div>
-      <div style={{ display: "flex", gap: 8 }}>
-        <input
-          type="text"
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Type your message…"
-          disabled={loading || ended}
-        />
-        <button onClick={handleSend} disabled={loading || ended}>
-          Send
-        </button>
-      </div>
-      <p style={{ marginTop: 16 }}>
-        <button onClick={finishConversation} disabled={loading || ended}>
-          End conversation
-        </button>
-      </p>
     </div>
   );
 }
