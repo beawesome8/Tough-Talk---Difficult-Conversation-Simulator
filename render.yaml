@@ -12,14 +12,13 @@ services:
         value: "20"
       - key: DAILY_BUDGET_CALLS
         value: "500"
-      # Render's fromService/host typically returns a bare hostname; if CORS
-      # rejects the frontend in practice, change this to a literal
-      # "https://<frontend-host>" origin string once the real URL is known.
+      # fromService/property:host returns Render's *internal* hostname (for
+      # Render-to-Render private networking), not the public URL a browser
+      # can reach. Confirmed on the live deploy: the frontend bundle ended up
+      # with the bare internal name "tough-talk-backend" instead of a usable
+      # origin. Hardcoded to the real public URL instead.
       - key: ALLOWED_ORIGINS
-        fromService:
-          type: web
-          name: tough-talk-frontend
-          property: host
+        value: "https://tough-talk-frontend.onrender.com"
     healthCheckPath: /health
 
   - type: web
@@ -28,8 +27,7 @@ services:
     staticPublishPath: frontend/dist
     buildCommand: cd frontend && npm install && npm run build
     envVars:
+      # See the ALLOWED_ORIGINS comment above — fromService/host is an
+      # internal hostname, not reachable from the browser. Hardcoded.
       - key: VITE_API_URL
-        fromService:
-          type: web
-          name: tough-talk-backend
-          property: host
+        value: "https://tough-talk-backend.onrender.com"
