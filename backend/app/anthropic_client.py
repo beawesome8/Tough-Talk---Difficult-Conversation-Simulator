@@ -35,6 +35,10 @@ def tag_message(leader_message: str) -> list[str]:
         "A manager just said this to a direct report during a difficult "
         "feedback conversation. Tag which of these behaviours it shows "
         f"(zero or more apply):\n{_TAG_LINES}\n\n"
+        "When a tag's definition includes an exclusivity note, follow it strictly — "
+        "dismisses_or_interrupts and adds_pressure_without_support must never both be "
+        "applied to the same message. Only apply a tag when the message clearly and "
+        "primarily shows that behaviour, not when it's a minor or incidental possibility.\n\n"
         f'Message: "{leader_message}"'
     )
     response = _client.messages.create(
